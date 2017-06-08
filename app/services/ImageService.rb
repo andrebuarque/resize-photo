@@ -4,6 +4,7 @@ class ImageService
 
   ENDPOINT = 'http://54.152.221.29/images.json'
   ROOT_DIR = "#{Rails.root}/public/images"
+  FORMATS = ['320x240', '384x288', '640x480']
 
   def self.resize_images
     images = self.find_images
@@ -39,19 +40,14 @@ class ImageService
       Dir.mkdir(dir) unless Dir.exists?(dir)
       file_path = "#{dir}/original.jpg"
 
-      # original
+      # original file
       open(file_path, "wb") do |io|
         io.write(response) 
       end
 
-      # 320x240
-      format_image(file_path, '320x240')
-
-      # 384x288
-      format_image(file_path, '384x288')
-
-      # 640x480
-      format_image(file_path, '640x480')
+      FORMATS.each { |format| 
+        format_image(file_path, format) 
+      }
 
       File.delete file_path
     end
