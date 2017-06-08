@@ -40,12 +40,24 @@ class ImageService
 
       FileUtils.mkdir_p(dir) unless Dir.exists?(dir)
       file_path = "#{dir}/original.jpg"
+      temp_path = "/tmp/tmp.jpg"
 
-      # original file
-      open(file_path, "wb") do |io|
-        io.write(response)
+      open(temp_path, "wb") do |io|
+        io.write response
       end
-
+      
+      if File.exists?(file_path) && FileUtils.identical?('/tmp/tmp.jpg', file_path)
+        File.delete temp_path
+        return
+      end
+      
+      File.delete temp_path
+      
+      # original file
+      original_file = open(file_path, "wb")
+      original_file.write response
+      original_file.close
+      
       FORMATS.each { |format| 
         format_image(file_path, format) 
       }
