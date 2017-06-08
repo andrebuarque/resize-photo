@@ -23,6 +23,12 @@ gem 'puma', '~> 3.0'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
 
+# mini replacement for RMagick http://mini_magick.rubyforge.org/
+gem "mini_magick"
+
+# FastImage Resize is an extremely light solution for resizing images in ruby by using libgd
+# gem 'fastimage_resize'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
