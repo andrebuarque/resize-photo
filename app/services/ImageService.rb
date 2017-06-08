@@ -46,12 +46,7 @@ class ImageService
         io.write response
       end
       
-      if File.exists?(file_path) && FileUtils.identical?('/tmp/tmp.jpg', file_path)
-        File.delete temp_path
-        return
-      end
-      
-      File.delete temp_path
+      return if File.exists?(file_path) && FileUtils.identical?(temp_path, file_path)
       
       # original file
       original_file = open(file_path, "wb")
