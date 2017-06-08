@@ -1,4 +1,5 @@
 require 'net/http'
+require 'fileutils'
 
 class ImageService
 
@@ -37,19 +38,18 @@ class ImageService
 
       response = Net::HTTP.get(URI image_url)
 
-      Dir.mkdir(dir) unless Dir.exists?(dir)
+      FileUtils.mkdir_p(dir) unless Dir.exists?(dir)
       file_path = "#{dir}/original.jpg"
 
       # original file
       open(file_path, "wb") do |io|
-        io.write(response) 
+        io.write(response)
       end
 
       FORMATS.each { |format| 
         format_image(file_path, format) 
       }
 
-      File.delete file_path
     end
 
     def self.format_image(file_path, format)
