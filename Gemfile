@@ -26,8 +26,7 @@ gem 'puma', '~> 3.0'
 # mini replacement for RMagick http://mini_magick.rubyforge.org/
 gem "mini_magick"
 
-# FastImage Resize is an extremely light solution for resizing images in ruby by using libgd
-# gem 'fastimage_resize'
+gem 'mongoid'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

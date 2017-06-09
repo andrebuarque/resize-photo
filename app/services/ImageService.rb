@@ -11,17 +11,9 @@ class ImageService
     images = self.find_images
 
     images.each do |image_url|
-      self.save_image(image_url)
+      document = self.save_on_disk(image_url)
+      self.save_on_db(document) unless document.nil?
     end
-
-  end
-
-  def self.get_images
-    Dir.glob("#{ROOT_DIR}/**/*").
-        select { |path| File.file?(path) }. # excludes directories from paths list. considers only files paths
-        map { |path| path[path.index("images/")..-1] }. # gets relative path (e.g: /images/NAME_FROM_ENDPOINT/640x480.jpg)
-        group_by { |path| path.split('/')[1] }. # group by name of file
-        map { |key, img| img }
   end
 
   private
@@ -32,7 +24,8 @@ class ImageService
       end
     end
 
-    def self.save_image(image_url)
+    def self.save_on_disk(image_url)
+      document = {}
       file_name = File.basename image_url, '.jpg'
       dir = "#{ROOT_DIR}/#{file_name}"
 
@@ -48,21 +41,34 @@ class ImageService
       
       return if File.exists?(file_path) && FileUtils.identical?(temp_path, file_path)
       
+      Image.where(original_size: file_path).destroy
+      
       # original file
+      document[:original_size] = file_path[file_path.index("images/")..-1]
       original_file = open(file_path, "wb")
       original_file.write response
       original_file.close
       
+      document[:resizeds] = []
       FORMATS.each { |format| 
-        format_image(file_path, format) 
+        document[:resizeds] << { format: format, url: format_image(file_path, format) } 
       }
-
+      
+      document
     end
 
     def self.format_image(file_path, format)
+      new_path = File.dirname(file_path) + "/#{format}.jpg"
+      
       image = MiniMagick::Image.open(file_path)
       image.resize format
       image.format 'jpg'
-      image.write(File.dirname(file_path) + "/#{format}.jpg")
+      image.write(new_path)
+      
+      new_path
+    end
+    
+    def self.save_on_db(document)
+      Image.create(document)
     end
 end

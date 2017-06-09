@@ -3,12 +3,18 @@ require "ImageService"
 class HomeController < ApplicationController
 
   def index
-    ImageService.resize_images()
-    images = ImageService.get_images().map do |items| 
-      items.map { |img| "#{request.base_url}/#{img}" }  
+    begin
+    
+      ImageService.resize_images()
+      render json: {status: 'success'}
+      
+    rescue Exception => e
+      render json: {status: 'error', message: e.message}
     end
-
-    render json: images
+  end
+  
+  def images
+    render json: Image.all, except: :_id
   end
 
 end
