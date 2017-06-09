@@ -6,7 +6,7 @@
 - mongodb
 - imagemagick
   - [linux] `sudo apt-get install imagemagick`
-  - [macOS] `brew link imagemagick`
+  - [macOS] `brew install imagemagick`
   
 ## How to run the Application
 
