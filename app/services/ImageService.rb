@@ -65,7 +65,7 @@ class ImageService
       image.format 'jpg'
       image.write(new_path)
       
-      new_path
+      new_path[new_path.index("images/")..-1]
     end
     
     def self.save_on_db(document)
